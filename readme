@@ -1,0 +1,7 @@
+build and run steps:
+	install packages:
+		npm install
+	run mongod:
+		mongod.exe
+	run app:
+		node app
