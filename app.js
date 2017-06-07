@@ -1,21 +1,18 @@
-/**
- * Module dependencies.
- */
-var express	= require('express');
-var connect = require('connect');
-var app		= express();
-var port	= process.env.PORT || 8080;
- 
-// Configuration
-app.use(express.static(__dirname + '/public'));
-app.use(connect.logger('dev'));
-app.use(connect.json());
-app.use(connect.urlencoded());
- 
-// Routes
- 
-require('./routes/routes.js')(app);
- 
+'use strict';
+
+const express    = require('express');        
+const app        = express();                
+const bodyParser = require('body-parser');
+const logger 	   = require('morgan');
+const router 	   = express.Router();
+const port 	   = process.env.PORT || 8080;
+
+app.use(bodyParser.json());
+app.use(logger('dev'));
+
+require('./routes')(router);
+app.use('/api/v1', router);
+
 app.listen(port);
- 
-console.log('The App runs on port ' + port);
+
+console.log(`App Runs on ${port}`);
