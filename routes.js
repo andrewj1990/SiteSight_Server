@@ -16,6 +16,8 @@ module.exports = router => {
 	router.post('/authenticate', (req, res) => {
 
 		const credentials = auth(req);
+		console.log(req.body);
+		console.log(credentials);
 
 		if (!credentials) {
 
@@ -42,6 +44,9 @@ module.exports = router => {
 		const name = req.body.name;
 		const email = req.body.email;
 		const password = req.body.password;
+
+		console.log(req.body);
+		console.log(req.body.name);
 
 		if (!name || !email || !password || !name.trim() || !email.trim() || !password.trim()) {
 

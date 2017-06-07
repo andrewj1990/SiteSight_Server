@@ -1,6 +1,6 @@
 'use strict';
 
-const user = require('../models/user');
+const user = require('../models/user').User;
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const randomstring = require("randomstring");
