@@ -13,20 +13,18 @@ const userSchema = mongoose.Schema({
 	temp_password_time: String
 });
 
+var pictureSchema = mongoose.Schema({
+	name : String,
+	path : String
+})
+
 var markSchema = mongoose.Schema({
 	x : Number,
 	y : Number,
 	radius   : Number,
 	location : String,
 	markedBy : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-	pictures : []
-})
-
-var pictureSchema = mongoose.Schema({
-	name : String, 
-	user_id : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-	mark_info : {type: mongoose.Schema.Types.ObjectId, ref: 'Mark'},
-	path : String,
+	picture : { type: mongoose.Schema.Types.ObjectId, ref: 'Picture'}
 })
 
 var User = mongoose.model('User', userSchema);

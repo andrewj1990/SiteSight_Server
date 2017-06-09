@@ -9,6 +9,8 @@ const profile = require('./functions/profile');
 const password = require('./functions/password');
 const config = require('./config/config.json');
 const marker = require('./functions/marker');
+const fs = require('fs');
+var busboy = require('connect-busboy');
 
 module.exports = router => {
 
@@ -79,6 +81,24 @@ module.exports = router => {
 		})
 		.catch(err => res.status(401).json({ message: 'Invalid Token !'}));
 
+	});
+
+	router.post('/upload', (req, res) => {
+		console.log('enter uploading');
+		var fstream;
+		req.pipe(req.busboy);
+		console.log('start uploading');
+		console.log(req.busboy.fieldname);
+		console.log(req.busboy.file);
+		console.log(req.busboy.filename);
+		req.busboy.on('file', function (fieldname, file, filename) {
+			console.log("Uploading: " + filename); 
+			fstream = fs.createWriteStream(__dirname + '/uploads/' + filename);
+			file.pipe(fstream);
+			fstream.on('close', function () {
+				res.redirect('back');
+			});
+		});
 	});
 
 	router.get('/users/:id', (req,res) => {

@@ -10,7 +10,6 @@ exports.newMarker = (email, x, y) =>
 		console.log(email);
 
 		user.find({email: email})
-
 		.then(users => {
 
 			if (users.length == 0) {
@@ -25,17 +24,11 @@ exports.newMarker = (email, x, y) =>
 				});
 
 				newMarker.save()
-
 				.then(() => resolve({ status: 201, message: 'new marker added successfully !' }))
-
 				.catch(err => {
-
 					if (err.code == 11000) {
-
 						reject({ status: 409, message: 'User Already Registered !' });
-
 					} else {
-
 						reject({ status: 500, message: 'Internal Server Error !' });
 					}
 				});
@@ -43,21 +36,6 @@ exports.newMarker = (email, x, y) =>
 				return newMarker;				
 			}
 		})
-
-		// .then(user => {
-
-		// 	const hashed_password = user.hashed_password;
-
-		// 	if (bcrypt.compareSync(password, hashed_password)) {
-
-		// 		resolve({ status: 200, message: email });
-
-		// 	} else {
-
-		// 		reject({ status: 401, message: 'Invalid Credentials !' });
-		// 	}
-		// })
-
 		.catch(err => reject({ status: 500, message: 'Internal Server Error !' }));
 
 	});
