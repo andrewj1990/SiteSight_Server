@@ -8,6 +8,7 @@ const login = require('./functions/login');
 const profile = require('./functions/profile');
 const password = require('./functions/password');
 const config = require('./config/config.json');
+const marker = require('./functions/marker');
 
 module.exports = router => {
 
@@ -64,6 +65,20 @@ module.exports = router => {
 
 			.catch(err => res.status(err.status).json({ message: err.message }));
 		}
+	});
+
+	router.post('/newmarker', (req, res) => {
+		const email = req.body.email;
+		const x = req.body.x;
+		const y = req.body.y;
+
+		marker.newMarker(email, x, y)
+		.then(result => {
+			res.setHeader('Location', '/users/'+email);
+			res.status(result.status).json({ message: result.message })
+		})
+		.catch(err => res.status(401).json({ message: 'Invalid Token !'}));
+
 	});
 
 	router.get('/users/:id', (req,res) => {
