@@ -73,10 +73,12 @@ module.exports = router => {
 		const email = req.body.email;
 		const x = req.body.x;
 		const y = req.body.y;
+		const r = req.body.radius;
+		const imageLocation = req.body.imageLocation;
 
-		marker.newMarker(email, x, y)
+		marker.newMarker(email, x, y, r, imageLocation)
 		.then(result => {
-			res.setHeader('Location', '/users/'+email);
+			res.setHeader('Location', '/users/' + email);
 			res.status(result.status).json({ message: result.message })
 		})
 		.catch(err => res.status(401).json({ message: 'Invalid Token !'}));
@@ -84,20 +86,31 @@ module.exports = router => {
 	});
 
 	router.post('/upload', (req, res) => {
-		console.log('enter uploading');
 		var fstream;
 		req.pipe(req.busboy);
-		console.log('start uploading');
-		console.log(req.busboy.fieldname);
-		console.log(req.busboy.file);
-		console.log(req.busboy.filename);
 		req.busboy.on('file', function (fieldname, file, filename) {
 			console.log("Uploading: " + filename); 
 			fstream = fs.createWriteStream(__dirname + '/uploads/' + filename);
 			file.pipe(fstream);
 			fstream.on('close', function () {
-				res.redirect('back');
+				res.status(200).json({ message: 'file uploaded at : ' + '/uploads/' + filename })
 			});
+		});
+	});
+
+	router.get('/image/:path', (req, res) => {
+		const path = __dirname + '/uploads/' + req.params.path;
+		console.log(path);
+
+		var file = path;
+		var s = fs.createReadStream(file);
+		s.on('open', function () {
+			res.set('Content-Type', 'image/jpeg');
+			s.pipe(res);
+		});
+		s.on('error', function () {
+			res.set('Content-Type', 'text/plain');
+			res.status(404).end('Not found');
 		});
 	});
 

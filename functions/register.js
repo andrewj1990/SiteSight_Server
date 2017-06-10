@@ -11,7 +11,6 @@ exports.registerUser = (name, email, password) =>
 		const hash = bcrypt.hashSync(password, salt);
 
 		const newUser = new user({
-
 			name: name,
 			email: email,
 			hashed_password: hash,

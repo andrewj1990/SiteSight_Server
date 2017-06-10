@@ -24,7 +24,7 @@ var markSchema = mongoose.Schema({
 	radius   : Number,
 	location : String,
 	markedBy : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-	picture : { type: mongoose.Schema.Types.ObjectId, ref: 'Picture'}
+	picture : String
 })
 
 var User = mongoose.model('User', userSchema);

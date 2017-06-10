@@ -4,7 +4,7 @@ const user = require('../models/user').User;
 const marker = require('../models/user').Mark;
 const bcrypt = require('bcryptjs');
 
-exports.newMarker = (email, x, y) => 
+exports.newMarker = (email, x, y, radius, imageLocation) => 
 
 	new Promise((resolve,reject) => {
 		console.log(email);
@@ -20,6 +20,8 @@ exports.newMarker = (email, x, y) =>
 				const newMarker = new marker({
 					x : x,
 					y : y,
+					radius : radius,
+					picture : imageLocation,
 					markedBy : users[0]._id,
 				});
 
