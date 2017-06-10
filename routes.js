@@ -105,7 +105,7 @@ module.exports = router => {
 			fstream = fs.createWriteStream(__dirname + '/uploads/' + filename);
 			file.pipe(fstream);
 			fstream.on('close', function () {
-				res.status(200).json({ message: 'file uploaded at : ' + '/uploads/' + filename })
+				res.status(200).json({ message: filename })
 			});
 		});
 	});
