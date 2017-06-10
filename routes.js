@@ -12,6 +12,7 @@ const marker = require('./functions/marker');
 const fs = require('fs');
 const busboy = require('connect-busboy');
 const path = require('path');
+const markerDB = require('./models/user').Mark;
 
 const fileType = {
     html: 'text/html',
@@ -126,6 +127,19 @@ module.exports = router => {
 			res.set('Content-Type', 'text/plain');
 			res.status(404).end('Not found');
 		});
+	});
+
+	router.get('/markers', (req, res) => {
+        // var body = req.body;
+        markerDB.find({}, function(err, data){
+            if (err) {
+                console.log(err);
+                return res(err);
+            } else {
+                console.log(data);
+                return res.json(data);
+            }
+        });
 	});
 
 	router.get('/users/:id', (req,res) => {
