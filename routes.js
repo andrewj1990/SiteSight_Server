@@ -10,7 +10,19 @@ const password = require('./functions/password');
 const config = require('./config/config.json');
 const marker = require('./functions/marker');
 const fs = require('fs');
-var busboy = require('connect-busboy');
+const busboy = require('connect-busboy');
+const path = require('path');
+
+const fileType = {
+    html: 'text/html',
+    txt: 'text/plain',
+    css: 'text/css',
+    gif: 'image/gif',
+    jpg: 'image/jpeg',
+    png: 'image/png',
+    svg: 'image/svg+xml',
+    js: 'application/javascript'
+};
 
 module.exports = router => {
 
@@ -98,14 +110,16 @@ module.exports = router => {
 		});
 	});
 
-	router.get('/image/:path', (req, res) => {
-		const path = __dirname + '/uploads/' + req.params.path;
-		console.log(path);
+	router.get('/image/:filename', (req, res) => {
+		const file = req.params.filename;
+		const filePath = __dirname + '/uploads/' + file;
+		console.log(filePath);
 
-		var file = path;
-		var s = fs.createReadStream(file);
+		var s = fs.createReadStream(filePath);
+		var type = fileType[path.extname(file).slice(1)] || 'text/plain';
+
 		s.on('open', function () {
-			res.set('Content-Type', 'image/jpeg');
+			res.set('Content-Type', type);
 			s.pipe(res);
 		});
 		s.on('error', function () {
