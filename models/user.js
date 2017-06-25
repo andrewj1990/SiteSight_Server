@@ -32,7 +32,7 @@ var Mark = mongoose.model('Mark', markSchema);
 var Picture = mongoose.model('Picture', pictureSchema);
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/node-android');
+// mongoose.connect('mongodb://localhost:27017/node-android');
 module.exports = {
 	User : User,
 	Mark : Mark,

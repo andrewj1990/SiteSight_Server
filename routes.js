@@ -27,6 +27,14 @@ const fileType = {
 
 module.exports = router => {
 
+	function requireLogin(req, res, next) {
+		if (!req.user) {
+			console.log('need to log in!');
+		} else {
+			next();
+		}
+	}
+
 	router.get('/', (req, res) => res.end('Welcome to Learn2Crack !'));
 
 	router.post('/authenticate', (req, res) => {
@@ -36,21 +44,16 @@ module.exports = router => {
 		console.log(credentials);
 
 		if (!credentials) {
-
 			res.status(400).json({ message: 'Invalid Request !' });
-
 		} else {
-
+			console.log(req.session);
+			req.session.user = credentials.name;
 			login.loginUser(credentials.name, credentials.pass)
-
 			.then(result => {
-
-				const token = jwt.sign(result, config.secret, { expiresIn: 1440 });
-			
+				const token = jwt.sign(result, config.secret, { expiresIn: 1440 });			
 				res.status(result.status).json({ message: result.message, token: token });
 
 			})
-
 			.catch(err => res.status(err.status).json({ message: err.message }));
 		}
 	});
@@ -82,13 +85,15 @@ module.exports = router => {
 		}
 	});
 
-	router.post('/newmarker', (req, res) => {
+	router.post('/newmarker', requireLogin, (req, res) => {
 		const email = req.body.email;
 		const x = req.body.x;
 		const y = req.body.y;
 		const r = req.body.radius;
 		const imageLocation = req.body.imageLocation;
-
+		
+		console.log(req.session);
+		
 		marker.newMarker(email, x, y, r, imageLocation)
 		.then(result => {
 			res.setHeader('Location', '/users/' + email);
@@ -98,7 +103,7 @@ module.exports = router => {
 
 	});
 
-	router.post('/upload', (req, res) => {
+	router.post('/upload', requireLogin, (req, res) => {
 		var fstream;
 		req.pipe(req.busboy);
 		req.busboy.on('file', function (fieldname, file, filename) {
@@ -111,7 +116,7 @@ module.exports = router => {
 		});
 	});
 
-	router.get('/image/:filename', (req, res) => {
+	router.get('/image/:filename', requireLogin, (req, res) => {
 		const file = req.params.filename;
 		const filePath = __dirname + '/uploads/' + file;
 		console.log(filePath);
@@ -129,7 +134,7 @@ module.exports = router => {
 		});
 	});
 
-	router.get('/markers', (req, res) => {
+	router.get('/markers', requireLogin, (req, res) => {
         // var body = req.body;
         markerDB.find({}, function(err, data){
             if (err) {
