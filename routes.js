@@ -13,6 +13,8 @@ const fs = require('fs');
 const busboy = require('connect-busboy');
 const path = require('path');
 const markerDB = require('./models/user').Mark;
+const User = require('./models/user').User;
+const ObjectId = require('mongodb').ObjectID;
 
 const fileType = {
     html: 'text/html',
@@ -40,13 +42,13 @@ module.exports = router => {
 	router.post('/authenticate', (req, res) => {
 
 		const credentials = auth(req);
-		console.log(req.body);
-		console.log(credentials);
+		// console.log(req.body);
+		// console.log(credentials);
 
 		if (!credentials) {
 			res.status(400).json({ message: 'Invalid Request !' });
 		} else {
-			console.log(req.session);
+			// console.log(req.session);
 			req.session.user = credentials.name;
 			login.loginUser(credentials.name, credentials.pass)
 			.then(result => {
@@ -86,16 +88,22 @@ module.exports = router => {
 	});
 
 	router.post('/newmarker', requireLogin, (req, res) => {
-		const email = req.body.email;
+		const email = req.user.email;
 		const x = req.body.x;
 		const y = req.body.y;
 		const r = req.body.radius;
-		const imageLocation = req.body.imageLocation;
-		
-		console.log(req.session);
+		const imageLocation = req.user.email + '_' + req.user.num_uploads + '.png';
 		
 		marker.newMarker(email, x, y, r, imageLocation)
 		.then(result => {
+			// update number of uploads for user
+			User.update(
+				{ '_id' : ObjectId(req.user._id) }, 
+				{ $set: { 'num_uploads': req.user.num_uploads + 1 } },
+				function (err, result) {
+					if (err) throw err;
+				});
+
 			res.setHeader('Location', '/users/' + email);
 			res.status(result.status).json({ message: result.message })
 		})
@@ -104,14 +112,17 @@ module.exports = router => {
 	});
 
 	router.post('/upload', requireLogin, (req, res) => {
+
+		var fname = req.user.email + '_' + req.user.num_uploads + '.png';
+
 		var fstream;
 		req.pipe(req.busboy);
 		req.busboy.on('file', function (fieldname, file, filename) {
-			console.log("Uploading: " + filename); 
-			fstream = fs.createWriteStream(__dirname + '/uploads/' + filename);
+			console.log("Uploading: " + fname);
+			fstream = fs.createWriteStream(__dirname + '/uploads/' + fname);
 			file.pipe(fstream);
 			fstream.on('close', function () {
-				res.status(200).json({ message: filename })
+				res.status(200).json({ message: fname })
 			});
 		});
 	});

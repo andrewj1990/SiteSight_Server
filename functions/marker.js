@@ -7,16 +7,13 @@ const bcrypt = require('bcryptjs');
 exports.newMarker = (email, x, y, radius, imageLocation) => 
 
 	new Promise((resolve,reject) => {
-		console.log(email);
-
 		user.find({email: email})
 		.then(users => {
-
 			if (users.length == 0) {
+				console.log("user not found..");
 				reject({ status: 404, message: 'User Not Found !' });
 			} else {
-				console.log(users[0]);
-
+				// console.log(users[0]);
 				const newMarker = new marker({
 					x : x,
 					y : y,

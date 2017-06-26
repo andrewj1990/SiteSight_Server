@@ -16,7 +16,7 @@ exports.loginUser = (email, password) =>
 				reject({ status: 404, message: 'User Not Found !' });
 
 			} else {
-				console.log(users[0]);
+				// console.log(users[0]);
 				return users[0];
 				
 			}

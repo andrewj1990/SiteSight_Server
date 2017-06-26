@@ -30,7 +30,7 @@ app.use(function(req, res, next) {
 	if (req.session && req.session.user) {
 		User.findOne({ email: req.session.user }, function(err, user) {
 			if (user) {
-				req.user = user.email;
+				req.user = user;
 				req.session.user = user.email;
 				delete req.user.password;
 				res.locals.user = user.email;
