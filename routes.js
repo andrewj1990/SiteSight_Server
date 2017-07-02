@@ -127,13 +127,15 @@ module.exports = router => {
 		});
 	});
 
-	router.get('/image/:filename', requireLogin, (req, res) => {
+	router.get('/image/:filename', (req, res) => {
 		const file = req.params.filename;
 		const filePath = __dirname + '/uploads/' + file;
 		console.log(filePath);
 
 		var s = fs.createReadStream(filePath);
 		var type = fileType[path.extname(file).slice(1)] || 'text/plain';
+
+		console.log(type);
 
 		s.on('open', function () {
 			res.set('Content-Type', type);
