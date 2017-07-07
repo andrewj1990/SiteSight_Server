@@ -32,6 +32,7 @@ module.exports = router => {
 	function requireLogin(req, res, next) {
 		if (!req.user) {
 			console.log('need to log in!');
+			res.status(401).json({ message: 'Need to log in !'});
 		} else {
 			next();
 		}
@@ -160,20 +161,23 @@ module.exports = router => {
         });
 	});
 
-	router.get('/users/:id', (req,res) => {
+	router.get('/users/:id', requireLogin, (req,res) => {
+		console.log(req.params.id);
 
-		if (checkToken(req)) {
+		profile.getProfile(req.params.id)
+		.then(result => res.json(result))
+		.catch(err => res.status(err.status).json({ message: err.message }));
 
-			profile.getProfile(req.params.id)
+		// if (checkToken(req)) {
 
-			.then(result => res.json(result))
+		// 	profile.getProfile(req.params.id)
+		// 	.then(result => res.json(result))
+		// 	.catch(err => res.status(err.status).json({ message: err.message }));
 
-			.catch(err => res.status(err.status).json({ message: err.message }));
+		// } else {
 
-		} else {
-
-			res.status(401).json({ message: 'Invalid Token !' });
-		}
+		// 	res.status(401).json({ message: 'Invalid Token !' });
+		// }
 	});
 
 	router.put('/users/:id', (req,res) => {
