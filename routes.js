@@ -94,7 +94,7 @@ module.exports = router => {
 				const email = req.user.email;
 				const latitude = req.body.latitude;
 				const longitude = req.body.longitude;
-				const radius = req.body.r;
+				const radius = req.body.radius;
 				const imageLocation = req.user.email + '_' + req.user.num_uploads + '.png';
 				
 				marker.newMarker(email, latitude, longitude, radius, imageLocation)
@@ -169,6 +169,20 @@ module.exports = router => {
                 return res.json(data);
             }
         });
+	});
+
+	router.get('/markers?id:id', requireLogin, (req, res) => {
+			// var body = req.body;
+			
+			markerDB.find({markedBy: req.params.id}, function(err, data){
+					if (err) {
+							console.log(err);
+							return res(err);
+					} else {
+							console.log(data);
+							return res.json(data);
+					}
+			});
 	});
 
 	router.get('/users/:id', requireLogin, (req,res) => {

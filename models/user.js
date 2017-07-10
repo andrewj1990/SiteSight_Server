@@ -5,13 +5,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = mongoose.Schema({ 
-	name 			: String,
-	email			: {type: String, unique: true}, 
+	name 	: String,
+	email : {type: String, unique: true}, 
 	hashed_password	: String,
 	num_uploads		: Number,
 	created_at		: String,
 	temp_password	: String,
-	temp_password_time: String
+	temp_password_time: String,
 });
 
 var pictureSchema = mongoose.Schema({
