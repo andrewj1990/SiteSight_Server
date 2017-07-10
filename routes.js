@@ -160,10 +160,10 @@ module.exports = router => {
 
 	router.get('/markers', requireLogin, (req, res) => {
         // var body = req.body;
-        markerDB.find({}, function(err, data){
+        markerDB.find({ "_id" : { $nin : req.user.visited_sites } }, function(err, data){
             if (err) {
                 console.log(err);
-                return res(err);
+                return res.json(err);
             } else {
                 console.log(data);
                 return res.json(data);
@@ -227,6 +227,42 @@ module.exports = router => {
 		} else {
 
 			res.status(401).json({ message: 'Invalid Token !' });
+		}
+	});
+
+	router.put('/markers/visited', requireLogin, (req,res) => {
+		try {
+			console.log(req.body.site_id);
+			console.log(req.user);
+
+			User.update(
+				{ '_id' : ObjectId(req.user._id) }, 
+				{ $push: { visited_sites : { _id : req.body.site_id } } },
+				function (err, result) {
+					if (err) throw err;
+				});
+
+			res.status(200).json({ message: 'Visited Site Added !' });
+		} catch (error) {
+			console.log(error)
+		}
+	});
+
+	router.put('/user/points', requireLogin, (req,res) => {
+		try {
+			console.log(req.body.points);
+			console.log(req.user);
+
+			User.update(
+				{ '_id' : ObjectId(req.user._id) }, 
+				{ $set: { 'points': req.user.points + req.body.points } },
+				function (err, result) {
+					if (err) throw err;
+				});
+
+			res.status(200).json({ message: 'Points Updated !' });
+		} catch (error) {
+			console.log(error)
 		}
 	});
 

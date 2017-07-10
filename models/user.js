@@ -9,6 +9,8 @@ const userSchema = mongoose.Schema({
 	email : {type: String, unique: true}, 
 	hashed_password	: String,
 	num_uploads		: Number,
+	points			: Number,
+	visited_sites	: { type : Array, "default" : [] },
 	created_at		: String,
 	temp_password	: String,
 	temp_password_time: String,

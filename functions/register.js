@@ -15,6 +15,7 @@ exports.registerUser = (name, email, password) =>
 			email: email,
 			hashed_password: hash,
 			num_uploads: 0,
+			points: 0,
 			created_at: new Date()
 		});
 
