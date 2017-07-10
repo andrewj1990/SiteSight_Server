@@ -88,44 +88,54 @@ module.exports = router => {
 		}
 	});
 
-	router.post('/newmarker', requireLogin, (req, res) => {
-		const email = req.user.email;
-		const x = req.body.x;
-		const y = req.body.y;
-		const r = req.body.radius;
-		const imageLocation = req.user.email + '_' + req.user.num_uploads + '.png';
-		
-		marker.newMarker(email, x, y, r, imageLocation)
-		.then(result => {
-			// update number of uploads for user
-			User.update(
-				{ '_id' : ObjectId(req.user._id) }, 
-				{ $set: { 'num_uploads': req.user.num_uploads + 1 } },
-				function (err, result) {
-					if (err) throw err;
-				});
+	router.post('/markers', requireLogin, (req, res) => {
+		try {
+			if(!isEmpty(req.body)){
+				const email = req.user.email;
+				const latitude = req.body.latitude;
+				const longitude = req.body.longitude;
+				const radius = req.body.r;
+				const imageLocation = req.user.email + '_' + req.user.num_uploads + '.png';
+				
+				marker.newMarker(email, latitude, longitude, radius, imageLocation)
+				.then(result => {
+					// update number of uploads for user
+					User.update(
+						{ '_id' : ObjectId(req.user._id) }, 
+						{ $set: { 'num_uploads': req.user.num_uploads + 1 } },
+						function (err, result) {
+							if (err) throw err;
+						});
 
-			res.setHeader('Location', '/users/' + email);
-			res.status(result.status).json({ message: result.message })
-		})
-		.catch(err => res.status(401).json({ message: 'Invalid Token !'}));
+					res.setHeader('Location', '/users/' + email);
+					res.status(result.status).json({ message: result.message })
+				})
+				.catch(err => res.status(401).json({ message: 'Invalid Token !'}));
+			}
+		} catch (error) {
+			console.log(error);
+			next();
+		}
 
 	});
 
 	router.post('/upload', requireLogin, (req, res) => {
-
-		var fname = req.user.email + '_' + req.user.num_uploads + '.png';
-
-		var fstream;
-		req.pipe(req.busboy);
-		req.busboy.on('file', function (fieldname, file, filename) {
-			console.log("Uploading: " + fname);
-			fstream = fs.createWriteStream(__dirname + '/uploads/' + fname);
-			file.pipe(fstream);
-			fstream.on('close', function () {
-				res.status(200).json({ message: fname })
+		try {
+			var fname = req.user.email + '_' + req.user.num_uploads + '.png';
+			var fstream;
+			req.pipe(req.busboy);
+			req.busboy.on('file', function (fieldname, file, filename) {
+				console.log("Uploading: " + fname);
+				fstream = fs.createWriteStream(__dirname + '/uploads/' + fname);
+				file.pipe(fstream);
+				fstream.on('close', function () {
+					res.status(200).json({ message: fname })
+				});
 			});
-		});
+		} catch (error) {
+			console.log(error)
+		}
+
 	});
 
 	router.get('/image/:filename', (req, res) => {
@@ -252,4 +262,12 @@ module.exports = router => {
 			return false;
 		}
 	}
+	function isEmpty(obj) {
+			for(var prop in obj) {
+					if(obj.hasOwnProperty(prop))
+							return false;
+			}
+			return JSON.stringify(obj) === JSON.stringify({});
+	}
+
 }

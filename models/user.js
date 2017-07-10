@@ -20,8 +20,8 @@ var pictureSchema = mongoose.Schema({
 })
 
 var markSchema = mongoose.Schema({
-	x : Number,
-	y : Number,
+	latitude  : { type : Number, require: true },
+	longitude : { type : Number, require: true },
 	radius   : Number,
 	location : String,
 	markedBy : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
