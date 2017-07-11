@@ -149,33 +149,32 @@ module.exports = router => {
 			fs.writeFile(filePath, base64Data, 'base64', function(err) {
 				if(err) {
 					console.log(err);
+					res.status(400).json({ message: 'Failed to upload image !' });
 				} else {
 					console.log("The file was saved!");
+
+					const email = req.user.email;
+					const latitude = req.body.latitude;
+					const longitude = req.body.longitude;
+					const radius = req.body.r;
+					const imageLocation = req.user.email + '_' + req.user.num_uploads + '.png';
+					
+					marker.newMarker(email, latitude, longitude, radius, imageLocation)
+					.then(result => {
+						// update number of uploads for user
+						User.update(
+							{ '_id' : ObjectId(req.user._id) }, 
+							{ $set: { 'num_uploads': req.user.num_uploads + 1 } },
+							function (err, result) {
+								if (err) throw err;
+							});
+
+						res.setHeader('Location', '/users/' + email);
+						res.status(result.status).json({ message: result.message })
+					})
+					.catch(err => res.status(401).json({ message: 'Invalid Token !'}));
 				}
 			});
-
-			const email = req.user.email;
-			const latitude = req.body.latitude;
-			const longitude = req.body.longitude;
-			const radius = req.body.r;
-			const imageLocation = req.user.email + '_' + req.user.num_uploads + '.png';
-			
-			marker.newMarker(email, latitude, longitude, radius, imageLocation)
-			.then(result => {
-				// update number of uploads for user
-				User.update(
-					{ '_id' : ObjectId(req.user._id) }, 
-					{ $set: { 'num_uploads': req.user.num_uploads + 1 } },
-					function (err, result) {
-						if (err) throw err;
-					});
-
-				res.setHeader('Location', '/users/' + email);
-				res.status(result.status).json({ message: result.message })
-			})
-			.catch(err => res.status(401).json({ message: 'Invalid Token !'}));
-
-			//res.status(200).json({ message: 'Added new Marker !' });
 		} catch (error) {
 			console.log(error)
 			res.status(400).json({ message: 'Failed to add new marker !' });
