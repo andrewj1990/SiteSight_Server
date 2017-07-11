@@ -231,6 +231,7 @@ module.exports = router => {
 			res.status(200).json({ message: 'Visited Site Added !' });
 		} catch (error) {
 			console.log(error)
+			res.status(400).json({ message: 'Failed to Add Visited Site !' });
 		}
 	});
 
@@ -249,6 +250,7 @@ module.exports = router => {
 			res.status(200).json({ message: 'Points Updated !' });
 		} catch (error) {
 			console.log(error)
+			res.status(400).json({ message: 'Failed to update Points !' });
 		}
 	});
 
