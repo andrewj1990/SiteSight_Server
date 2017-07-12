@@ -138,6 +138,50 @@ module.exports = router => {
 
 	});
 
+	router.post('/addmarker', requireLogin, (req, res) => {
+		try {
+			var base64Data = req.body.image;
+
+			const file = req.params.filename;
+			var fname = req.user.email + '_' + req.user.num_uploads + '.png';
+			const filePath = __dirname + '/uploads/' + fname;
+
+			fs.writeFile(filePath, base64Data, 'base64', function(err) {
+				if(err) {
+					console.log(err);
+					res.status(400).json({ message: 'Failed to upload image !' });
+				} else {
+					console.log("The file was saved!");
+
+					const email = req.user.email;
+					const latitude = req.body.latitude;
+					const longitude = req.body.longitude;
+					const radius = req.body.r;
+					const imageLocation = req.user.email + '_' + req.user.num_uploads + '.png';
+					
+					marker.newMarker(email, latitude, longitude, radius, imageLocation)
+					.then(result => {
+						// update number of uploads for user
+						User.update(
+							{ '_id' : ObjectId(req.user._id) }, 
+							{ $inc: { 'num_uploads': 1 } },
+							function (err, result) {
+								if (err) throw err;
+							});
+
+						res.setHeader('Location', '/users/' + email);
+						res.status(result.status).json({ message: result.message })
+					})
+					.catch(err => res.status(401).json({ message: 'Invalid Token !'}));
+				}
+			});
+		} catch (error) {
+			console.log(error)
+			res.status(400).json({ message: 'Failed to add new marker !' });
+		}
+
+	});
+
 	router.get('/image/:filename', (req, res) => {
 		const file = req.params.filename;
 		const filePath = __dirname + '/uploads/' + file;
@@ -245,6 +289,7 @@ module.exports = router => {
 			res.status(200).json({ message: 'Visited Site Added !' });
 		} catch (error) {
 			console.log(error)
+			res.status(400).json({ message: 'Failed to Add Visited Site !' });
 		}
 	});
 
@@ -255,7 +300,7 @@ module.exports = router => {
 
 			User.update(
 				{ '_id' : ObjectId(req.user._id) }, 
-				{ $set: { 'points': req.user.points + req.body.points } },
+				{ $inc: { 'points': req.body.points } },
 				function (err, result) {
 					if (err) throw err;
 				});
@@ -263,6 +308,27 @@ module.exports = router => {
 			res.status(200).json({ message: 'Points Updated !' });
 		} catch (error) {
 			console.log(error)
+			res.status(400).json({ message: 'Failed to update Points !' });
+		}
+	});
+
+	router.put('/user/givepoints', requireLogin, (req,res) => {
+		try {
+			console.log(req.body.points);
+			console.log(req.body.userid);
+
+			User.update(
+				{ '_id' : ObjectId(req.body.userid) },
+				{ $inc: { 'points' : req.body.points } },
+				function (err, result) {
+					if (err) throw err;
+				}
+			);
+
+			res.status(200).json({ message: 'Points Updated !' });
+		} catch (error) {
+			console.log(error)
+			res.status(400).json({ message: 'Failed to update Points !' });
 		}
 	});
 
