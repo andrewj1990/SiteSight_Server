@@ -164,7 +164,7 @@ module.exports = router => {
 						// update number of uploads for user
 						User.update(
 							{ '_id' : ObjectId(req.user._id) }, 
-							{ $set: { 'num_uploads': req.user.num_uploads + 1 } },
+							{ $inc: { 'num_uploads': 1 } },
 							function (err, result) {
 								if (err) throw err;
 							});
