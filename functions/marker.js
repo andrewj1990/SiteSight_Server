@@ -28,8 +28,8 @@ exports.newMarker = (email,latitude,longitude, radius, imageLocation) =>
 				var dy = r * Math.sin(theta);
 				var r_earth = 6371;
 
-				var clatitude  = latitude  + (dy / r_earth) * (180 / Math.PI);
-				var clongitude = longitude + (dx / r_earth) * (180 / Math.PI) / Math.cos(latitude * Math.PI / 180);
+				var clatitude  = Number(latitude)  + (dy / r_earth) * (180 / Math.PI);
+				var clongitude = Number(longitude) + (dx / r_earth) * (180 / Math.PI) / Math.cos(latitude * Math.PI / 180);
 
 				console.log("r : " + r + " | theta : " + theta);
 				console.log(" lat : " + latitude + " |  long : " + longitude);
@@ -52,6 +52,7 @@ exports.newMarker = (email,latitude,longitude, radius, imageLocation) =>
 					if (err.code == 11000) {
 						reject({ status: 409, message: 'User Already Registered !' });
 					} else {
+						console.log(err)
 						reject({ status: 500, message: 'Internal Server Error !' });
 					}
 				});

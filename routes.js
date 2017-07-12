@@ -140,11 +140,12 @@ module.exports = router => {
 
 	router.post('/addmarker', requireLogin, (req, res) => {
 		try {
-			var base64Data = req.body.image;
-
+			console.log(req.body);
+			const base64Data = req.body.image;
 			const file = req.params.filename;
-			var fname = req.user.email + '_' + req.user.num_uploads + '.png';
+			const fname = req.user.email + '_' + req.user.num_uploads + '.png';
 			const filePath = __dirname + '/uploads/' + fname;
+
 
 			fs.writeFile(filePath, base64Data, 'base64', function(err) {
 				if(err) {
@@ -172,7 +173,10 @@ module.exports = router => {
 						res.setHeader('Location', '/users/' + email);
 						res.status(result.status).json({ message: result.message })
 					})
-					.catch(err => res.status(401).json({ message: 'Invalid Token !'}));
+					.catch(err => {
+						console.log(err);
+						res.status(401).json({ message: 'Invalid Token !'})
+					});
 				}
 			});
 		} catch (error) {
@@ -209,7 +213,7 @@ module.exports = router => {
                 console.log(err);
                 return res.json(err);
             } else {
-                console.log(data);
+                // console.log(data);
                 return res.json(data);
             }
         });
@@ -231,7 +235,6 @@ module.exports = router => {
 
 	router.get('/users/:id', requireLogin, (req,res) => {
 		console.log(req.params.id);
-
 		profile.getProfile(req.params.id)
 		.then(result => res.json(result))
 		.catch(err => res.status(err.status).json({ message: err.message }));
