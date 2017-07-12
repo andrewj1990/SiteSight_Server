@@ -286,10 +286,30 @@ module.exports = router => {
 
 			User.update(
 				{ '_id' : ObjectId(req.user._id) }, 
-				{ $set: { 'points': req.user.points + req.body.points } },
+				{ $inc: { 'points': req.body.points } },
 				function (err, result) {
 					if (err) throw err;
 				});
+
+			res.status(200).json({ message: 'Points Updated !' });
+		} catch (error) {
+			console.log(error)
+			res.status(400).json({ message: 'Failed to update Points !' });
+		}
+	});
+
+	router.put('/user/givepoints', requireLogin, (req,res) => {
+		try {
+			console.log(req.body.points);
+			console.log(req.body.userid);
+
+			User.update(
+				{ '_id' : ObjectId(req.body.userid) },
+				{ $inc: { 'points' : req.body.points } },
+				function (err, result) {
+					if (err) throw err;
+				}
+			);
 
 			res.status(200).json({ message: 'Points Updated !' });
 		} catch (error) {
