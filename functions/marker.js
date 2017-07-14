@@ -8,7 +8,7 @@ function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-exports.newMarker = (email,latitude,longitude, radius, imageLocation) => 
+exports.newMarker = (email, title, description, latitude, longitude, radius, imageLocation) => 
 
 	new Promise((resolve,reject) => {
 		user.find({email: email})
@@ -37,6 +37,8 @@ exports.newMarker = (email,latitude,longitude, radius, imageLocation) =>
 
 				// console.log(users[0]);
 				const newMarker = new marker({
+					title : title,
+					description : description,
 					latitude : latitude,
 					longitude : longitude,
 					circle_lat : clatitude,

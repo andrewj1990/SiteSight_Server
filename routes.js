@@ -91,13 +91,15 @@ module.exports = router => {
 	router.post('/markers', requireLogin, (req, res) => {
 		try {
 			if(!isEmpty(req.body)){
+				const title = req.body.title;
+				const description = req.body.description;
 				const email = req.user.email;
 				const latitude = req.body.latitude;
 				const longitude = req.body.longitude;
 				const radius = req.body.radius;
 				const imageLocation = req.user.email + '_' + req.user.num_uploads + '.png';
 				
-				marker.newMarker(email, latitude, longitude, radius, imageLocation)
+				marker.newMarker(email, title, description, latitude, longitude, radius, imageLocation)
 				.then(result => {
 					// update number of uploads for user
 					User.update(
@@ -154,13 +156,15 @@ module.exports = router => {
 				} else {
 					console.log("The file was saved!");
 
+					const title = req.body.title;
+					const description = req.body.description;
 					const email = req.user.email;
 					const latitude = req.body.latitude;
 					const longitude = req.body.longitude;
 					const radius = req.body.r;
 					const imageLocation = req.user.email + '_' + req.user.num_uploads + '.png';
 					
-					marker.newMarker(email, latitude, longitude, radius, imageLocation)
+					marker.newMarker(email, title, description, latitude, longitude, radius, imageLocation)
 					.then(result => {
 						// update number of uploads for user
 						User.update(

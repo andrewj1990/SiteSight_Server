@@ -26,6 +26,8 @@ var markSchema = mongoose.Schema({
 	longitude : { type : Number, require: true },
 	circle_lat : { type : Number, require: true },
 	circle_lon : { type : Number, require: true },
+	title	 : String,
+	description : String,
 	radius   : Number,
 	location : String,
 	markedBy : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
