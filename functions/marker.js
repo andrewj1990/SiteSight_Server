@@ -18,8 +18,8 @@ exports.newMarker = (email, title, description, latitude, longitude, radius, ima
 				reject({ status: 404, message: 'User Not Found !' });
 			} else {
 
-				// var r = getRandomArbitrary(0, radius / 1000); // meters
-				var r = getRandomArbitrary(0, Number(radius)) ;	// km
+				var r = getRandomArbitrary(0, Number(radius) / 1000); // meters
+				//var r = getRandomArbitrary(0, Number(radius)) ;	// km
 				var theta = getRandomArbitrary(0, 360) * Math.PI / 180;
 				// r = 1;
 				// var theta = 45 * Math.PI / 180;

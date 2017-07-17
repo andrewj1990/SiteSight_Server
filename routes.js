@@ -38,7 +38,7 @@ module.exports = router => {
 		}
 	}
 
-	router.get('/', (req, res) => res.end('Welcome to Learn2Crack !'));
+	router.get('/', (req, res) => res.end('Welcome to Site Sight !'));
 
 	router.post('/authenticate', (req, res) => {
 
