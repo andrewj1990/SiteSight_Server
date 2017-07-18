@@ -223,6 +223,19 @@ module.exports = router => {
         });
 	});
 
+	router.get('/markersvisited', requireLogin, (req, res) => {
+        // var body = req.body;
+        markerDB.find({ "_id" : { $in : req.user.visited_sites } }, function(err, data){
+            if (err) {
+                console.log(err);
+                return res.json(err);
+            } else {
+                // console.log(data);
+                return res.json(data);
+            }
+        });
+	});
+
 	router.get('/markers?id:id', requireLogin, (req, res) => {
 			// var body = req.body;
 			
