@@ -67,9 +67,6 @@ module.exports = router => {
 		const email = req.body.email;
 		const password = req.body.password;
 
-		console.log(req.body);
-		console.log(req.body.name);
-
 		if (!name || !email || !password || !name.trim() || !email.trim() || !password.trim()) {
 
 			res.status(400).json({message: 'Invalid Request !'});
